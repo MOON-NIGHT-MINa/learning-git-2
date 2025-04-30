@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Upload</title>
+    <style>
+        h1{
+            background: #25c314;
+            border-radius: 15px;
+            font-size: 2em;
+            text-align: center;
+            margin-bottom: 0px;
+            height: 40px;
+            letter-spacing: 2px;
+        }
+        
+        html{
+            height: 100vh;
+            width: 100vw;
+            background: linear-gradient(rgb(4, 130, 38), rgb(235, 235, 235));
+        }
+        
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-family: Arial, sans-serif;
+            margin-top: 50px; 
+        }
+
+        form {
+            background: white;
+            height: 200px;
+            width: 800px;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        input, button {
+            padding: 10px;
+            font-size: 16px;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        #message {
+            margin-top: 20px;
+            font-size: 18px;
+            color: green;
+        }
+        #zorar:hover{
+            letter-spacing: 7px;
+            transition: 1s;
+            background: #25c314;
+            font-family: fantasy;
+        }
+        .file{
+            margin-top: 250px;
+        }
+    </style>
+</head>
+<body>
+    <div class="file">
+    <h1>Upload File</h1>
+    <form id="uploadForm" enctype="multipart/form-data">
+        <input type="text" id="filename" name="filename" placeholder="Enter file name" required>
+        <input type="file" id="file" name="file" required>
+        <br>
+        <button type="submit" id="zorar">Upload</button>
+    </form>
+    <div id="message"></div>
+    </div>
+
+    <script>
+        function beep() {
+            const audio = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = audio.createOscillator();
+            const gainNode = audio.createGain();
+            oscillator.type = "sine"; 
+            oscillator.frequency.setValueAtTime(600, audio.currentTime); // Bluetooth-like frequency
+            oscillator.connect(gainNode);
+            gainNode.connect(audio.destination);
+            oscillator.start();
+            oscillator.stop(audio.currentTime + 0.3); // Play for 0.3 seconds
+        }
+
+        document.getElementById("uploadForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+
+            const formData = new FormData();
+            formData.append("filename", document.getElementById("filename").value);
+            formData.append("file", document.getElementById("file").files[0]);
+
+            fetch('/upload', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById("message").innerText = data;
+                beep(); // <<< beep when upload success
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        });
+    </script>
+</body>
+</html>
