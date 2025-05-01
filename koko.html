@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>File Upload</title>
     <style>
-        h1{
+        h1 {
             background: #25c314;
             border-radius: 15px;
             font-size: 2em;
@@ -15,7 +15,7 @@
             letter-spacing: 2px;
         }
         
-        html{
+        html {
             height: 100vh;
             width: 100vw;
             background: linear-gradient(rgb(4, 130, 38), rgb(235, 235, 235));
@@ -45,53 +45,45 @@
             padding: 10px;
             font-size: 16px;
         }
+        
         button {
             background-color: #4CAF50;
             color: white;
             border: none;
             cursor: pointer;
         }
+        
         #message {
             margin-top: 20px;
             font-size: 18px;
             color: green;
         }
-        #zorar:hover{
+        
+        #zorar:hover {
             letter-spacing: 7px;
             transition: 1s;
             background: #25c314;
             font-family: fantasy;
         }
-        .file{
+
+        .file {
             margin-top: 250px;
         }
     </style>
 </head>
 <body>
     <div class="file">
-    <h1>Upload File</h1>
-    <form id="uploadForm" enctype="multipart/form-data">
-        <input type="text" id="filename" name="filename" placeholder="Enter file name" required>
-        <input type="file" id="file" name="file" required>
-        <br>
-        <button type="submit" id="zorar">Upload</button>
-    </form>
-    <div id="message"></div>
+        <h1>Upload File</h1>
+        <form id="uploadForm" enctype="multipart/form-data">
+            <input type="text" id="filename" name="filename" placeholder="Enter file name" required>
+            <input type="file" id="file" name="file" required>
+            <br>
+            <button type="submit" id="zorar">Upload</button>
+        </form>
+        <div id="message"></div>
     </div>
 
     <script>
-        function beep() {
-            const audio = new (window.AudioContext || window.webkitAudioContext)();
-            const oscillator = audio.createOscillator();
-            const gainNode = audio.createGain();
-            oscillator.type = "sine"; 
-            oscillator.frequency.setValueAtTime(600, audio.currentTime); // Bluetooth-like frequency
-            oscillator.connect(gainNode);
-            gainNode.connect(audio.destination);
-            oscillator.start();
-            oscillator.stop(audio.currentTime + 0.3); // Play for 0.3 seconds
-        }
-
         document.getElementById("uploadForm").addEventListener("submit", function(event) {
             event.preventDefault();
 
@@ -99,17 +91,17 @@
             formData.append("filename", document.getElementById("filename").value);
             formData.append("file", document.getElementById("file").files[0]);
 
-            fetch('/upload', {
+            fetch('http://localhost:3000/upload', {  // Make sure this URL matches your backend endpoint
                 method: 'POST',
                 body: formData
             })
             .then(response => response.text())
             .then(data => {
-                document.getElementById("message").innerText = data;
-                beep(); // <<< beep when upload success
+                document.getElementById("message").innerHTML = <span style="color: green;">${data}</span>;
             })
             .catch(error => {
                 console.error('Error:', error);
+                document.getElementById("message").innerHTML = <span style="color: red;">Error uploading file!</span>;
             });
         });
     </script>
